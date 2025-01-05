@@ -77,7 +77,7 @@ elevatorBaseHeight,
   public static class OuttakeConstants {
     public static final int
       armMotorId = 6,
-      extensionMotorId = 7,
+      extensionMotorId = 9,
       clawMotorId = 8;
     
     public static final double

@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -43,7 +44,9 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
+    if (DriverStation.isEnabled()) {
+      moveToSetpoint(ElevatorConstants.levels[currentLevel]);
+    }
   }
 
   double getPosition() {
@@ -60,16 +63,10 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Sets the target level of the elevator by index (0 for base, 3 for top)
+   * Sets the target level of the elevator by index (0 for base, 1 for reef trough, 4 for reef top)
    */
-  private void setLevel(int index) {
-    moveMeters(ElevatorConstants.levels[index] - ElevatorConstants.levels[currentLevel]);
+  public void setLevel(int index) {
     currentLevel = index;
-  }
-
-  private void moveMeters(double meters) {
-    double deltaRotations = meters / ElevatorConstants.positionConversionFactor;
-    motor.getClosedLoopController().setReference(motor.getEncoder().getPosition() + deltaRotations, ControlType.kPosition);
   }
 
 }

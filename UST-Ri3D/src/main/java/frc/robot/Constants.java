@@ -83,7 +83,11 @@ elevatorBaseHeight,
       p = 0.0,
       i = 0.0,
       d = 0.0,
-      armEncoderOffset = 0.0;
+      armEncoderOffset = 0.0,
+      gearRatio = 0.0,      // TODO: Add real value
+      wheelDiameter = 0.0,  // TODO: Add real value
+      // Rotations to meters
+      positionConversionFactor = gearRatio * Math.PI * wheelDiameter;
 
     public static final double[] angles = {
       armEncoderOffset,

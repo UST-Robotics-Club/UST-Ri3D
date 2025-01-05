@@ -28,7 +28,7 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = new Drivetrain();
   public static final Elevator elevator = new Elevator();
   public static final Intake intake = new Intake();
-  public static final Outtake spitter = new Outtake();
+  public static final Outtake outtake = new Outtake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driverController =

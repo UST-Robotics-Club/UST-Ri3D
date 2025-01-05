@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -32,31 +34,46 @@ public class Outtake extends SubsystemBase {
   SparkMax claw = new SparkMax(OuttakeConstants.clawMotorId, null);
 
   AnalogInput armEncoder = new AnalogInput(0);
+  RelativeEncoder extensionEncoder = extension.getEncoder();
 
-  ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0); // TODO: Find feedforward constants using SysID
-  TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0, 0); // TODO: Find trapezoid profile constraints
-  ProfiledPIDController controller = new ProfiledPIDController(OuttakeConstants.p, OuttakeConstants.i, OuttakeConstants.d, constraints);
+  ArmFeedforward feedforwardArm = new ArmFeedforward(0, 0, 0); // TODO: Find feedforward constants using SysID
+  TrapezoidProfile.Constraints constraintsArm = new TrapezoidProfile.Constraints(0, 0); // TODO: Find trapezoid profile constraints
+  ProfiledPIDController controllerArm = new ProfiledPIDController(OuttakeConstants.p, OuttakeConstants.i, OuttakeConstants.d, constraintsArm);
+
+  ElevatorFeedforward feedforwardExtension = new ElevatorFeedforward(0, 0, 0); // TODO: Find feedforward constants using SysID
+  TrapezoidProfile.Constraints constraintsExtension = new TrapezoidProfile.Constraints(0, 0); // TODO: Find trapezoid profile constraints
+  ProfiledPIDController controllerExtension = new ProfiledPIDController(OuttakeConstants.p, OuttakeConstants.i, OuttakeConstants.d, constraintsExtension);
 
   int currentLevel = 0;
 
   @Override
   public void periodic() {
     if (DriverStation.isEnabled()) {
-      moveToSetpoint(OuttakeConstants.angles[currentLevel]);
+      angleArmToSetpoint(OuttakeConstants.angles[currentLevel]);
     }
   }
 
-  double getPosition() {
+  double getArmPosition() {
     return armEncoder.getVoltage() / RobotController.getCurrent3V3() * 360;
+  }
+
+  double getExtensionPosition() {
+    return extensionEncoder.getPosition();
   }
 
   /*
    * 
    */
-  public void moveToSetpoint(double setpoint) {
+  public void angleArmToSetpoint(double setpoint) {
     arm.setVoltage(
-      controller.calculate(getPosition())
-        + feedforward.calculate(getPosition(), controller.getSetpoint().velocity));
+      controllerArm.calculate(getArmPosition())
+        + feedforwardArm.calculate(getArmPosition(), controllerArm.getSetpoint().velocity));
+  }
+
+  public void extendArmToSetpoint(double setpoint) {
+    extension.setVoltage(
+      controllerExtension.calculate(getArmPosition())
+        + feedforwardExtension.calculate(controllerExtension.getSetpoint().velocity));
   }
 
   public void setLevel(int index) {

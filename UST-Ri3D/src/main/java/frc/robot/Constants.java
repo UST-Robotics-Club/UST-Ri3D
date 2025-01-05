@@ -14,7 +14,23 @@ package frc.robot;
  */
 public final class Constants {
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    public static final int
+    kDriverControllerPort = 0;
+  }
+
+  public static class ElevatorConstants {
+    public static final int
+    elevatorID = 7;
+    public static final double
+    gearRatio = 0.0,      // TODO: Add real value
+    wheelDiameter = 0.0,  // TODO: Add real value
+    // Rotations to meters traveled
+    positionConversionFactor = gearRatio * Math.PI * wheelDiameter,
+    p = 0.0,              // TODO: Add real value
+    i = 0.0,              // TODO: Add real value
+    d = 0.0,              // TODO: Add real value
+    minOutput = 0.0,      // TODO: Add real value
+    maxOutput = 0.0;      // TODO: Add real value
   }
 
   public static class DriveConstants {

@@ -71,11 +71,30 @@ public class RobotContainer {
           intake.setIntakeOff();
         };
       });
-      // Something
-      new JoystickButton(driverController, XboxController.Button.kStart.value).onTrue(new InstantCommand() {
+      // Elevator level control (starting with bottom letter button for lowest level and going clockwise)
+      new JoystickButton(driverController, XboxController.Button.kA.value).onTrue(new InstantCommand() {
         @Override
         public void initialize() {
-          //elevator.blah
+          elevator.setLevel(0);
+        }
+      });
+      /* No level 1 for now */
+      new JoystickButton(driverController, XboxController.Button.kX.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          elevator.setLevel(2);
+        }
+      });
+      new JoystickButton(driverController, XboxController.Button.kY.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          elevator.setLevel(3);
+        }
+      });
+      new JoystickButton(driverController, XboxController.Button.kB.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          elevator.setLevel(4);
         }
       });
     

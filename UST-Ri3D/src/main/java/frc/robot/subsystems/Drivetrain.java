@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 
@@ -17,8 +18,9 @@ import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.commands.OperatorDrive;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -48,12 +50,15 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     resetGyro(0);
   }
+
   public void resetPosition(double x, double y) {
     odometry.resetTranslation(new Translation2d(x, y));
   }
+
   public void resetGyro(double angle) {
     imu.setGyroAngleZ(angle);
   }
+
   public double getAngleDegrees() {
     return imu.getAngle();
   }
@@ -75,12 +80,21 @@ public class Drivetrain extends SubsystemBase {
     drive(new ChassisSpeeds(x, y, rot));
   }
 
-  public void drive(ChassisSpeeds speeds) {
+  // Uses percents instead of meters per second
+  public void drivePercent(ChassisSpeeds speeds) {
     MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
     frontLeft.set(wheelSpeeds.frontLeftMetersPerSecond);
     frontRight.set(wheelSpeeds.frontRightMetersPerSecond);
     backLeft.set(wheelSpeeds.rearLeftMetersPerSecond);
     backRight.set(wheelSpeeds.rearRightMetersPerSecond);
+  }
+
+  public void drive(ChassisSpeeds speeds) {
+    MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
+    frontLeft.getClosedLoopController().setReference(wheelSpeeds.frontLeftMetersPerSecond, ControlType.kVelocity);
+    frontRight.getClosedLoopController().setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
+    backLeft.getClosedLoopController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
+    backRight.getClosedLoopController().setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
   }
 
   @Override
@@ -89,10 +103,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public MecanumDriveWheelPositions getWheelPositions() {
-    return new MecanumDriveWheelPositions(frontLeft.getEncoder().getPosition() * positionConversionFactor, 
-    frontRight.getEncoder().getPosition() * positionConversionFactor, 
-    backLeft.getEncoder().getPosition() * positionConversionFactor, 
-    backRight.getEncoder().getPosition() * positionConversionFactor);
+    return new MecanumDriveWheelPositions(frontLeft.getEncoder().getPosition() * positionConversionFactor,
+        frontRight.getEncoder().getPosition() * positionConversionFactor,
+        backLeft.getEncoder().getPosition() * positionConversionFactor,
+        backRight.getEncoder().getPosition() * positionConversionFactor);
   }
 
 }

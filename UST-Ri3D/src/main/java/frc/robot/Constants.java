@@ -27,7 +27,7 @@ public final class Constants {
 
   public static class ElevatorConstants {
     public static final int
-    motorID = 7,
+    motorID = 10,
     limitSwitchID = 0; // TODO: Add real value
     public static final double
     gearRatio = 0.0,      // TODO: Add real value

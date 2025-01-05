@@ -4,10 +4,16 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Spitter extends SubsystemBase {
-  public Spitter() {}
+public class Outtake extends SubsystemBase {
+  public Outtake() {}
+
+  SparkMax arm = new SparkMax(0, null);
+  SparkMax extension = new SparkMax(0, null);
+  SparkMax claw = new SparkMax(0, null);
 
   @Override
   public void periodic() {

@@ -9,7 +9,7 @@ import frc.robot.commands.OperatorDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Spitter;
+import frc.robot.subsystems.Outtake;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,7 +28,7 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = new Drivetrain();
   public static final Elevator elevator = new Elevator();
   public static final Intake intake = new Intake();
-  public static final Spitter spitter = new Spitter();
+  public static final Outtake spitter = new Outtake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driverController =

@@ -65,13 +65,16 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int deployerId = 5,
-        intakeMotorId = 6,
-        internalReleaserId = 7,
-        releaseTime = 1000;
-    public static final double deployedPosition = 100,
-        retractedPosition = 0,
-        intakeSpeed = 0.9,
-        releaserSpeed = 0.5;
+    public static final int 
+      intakeMotorId = 5;
+    public static final double 
+      intakeSpeed = 0.9;
+  }
+
+  public static class OuttakeConstants {
+    public static final int
+      armMotorId = 6,
+      extensionMotorId = 7,
+      clawMotorId = 8;
   }
 }

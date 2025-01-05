@@ -6,26 +6,93 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
+
+  ADIS16470_IMU imu = new ADIS16470_IMU();
   SparkMax frontLeft = new SparkMax(1, MotorType.kBrushless);
   SparkMax frontRight = new SparkMax(2, MotorType.kBrushless);
   SparkMax backLeft = new SparkMax(3, MotorType.kBrushless);
   SparkMax backRight = new SparkMax(4, MotorType.kBrushless);
-  public Drivetrain() {
 
+  // Locations of the wheels relative to the robot center.
+  Translation2d frontLeftLocation = new Translation2d(0.381, 0.381);
+  Translation2d frontRightLocation = new Translation2d(0.381, -0.381);
+  Translation2d backLeftLocation = new Translation2d(-0.381, 0.381);
+  Translation2d backRightLocation = new Translation2d(-0.381, -0.381);
+  // Creating my kinematics object using the wheel locations.
+  private MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
+      frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
+
+  // Rotations to meters traveled
+  private final double positionConversionFactor = (1 / 10.71) * Math.PI * 0.15;
+  private MecanumDriveOdometry odometry = new MecanumDriveOdometry(
+      kinematics,
+      getRotation(),
+      getWheelPositions(),
+      new Pose2d(0, 0, new Rotation2d()));
+
+  public Drivetrain() {
+    resetGyro(0);
+  }
+  public void resetPosition(double x, double y) {
+    odometry.resetTranslation(new Translation2d(x, y));
+  }
+  public void resetGyro(double angle) {
+    imu.setGyroAngleZ(angle);
+  }
+  public double getAngleDegrees() {
+    return imu.getAngle();
+  }
+
+  public double getAngleRadians() {
+    return Math.toRadians(getAngleDegrees());
+  }
+
+  public Rotation2d getRotation() {
+    return new Rotation2d(getAngleRadians());
+  }
+
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
   }
 
   // Robot relative. X = forward, y = left, rot = counterclockise
   public void drive(double x, double y, double rot) {
-    
+    drive(new ChassisSpeeds(x, y, rot));
   }
+
+  public void drive(ChassisSpeeds speeds) {
+    MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
+    frontLeft.set(wheelSpeeds.frontLeftMetersPerSecond);
+    frontRight.set(wheelSpeeds.frontRightMetersPerSecond);
+    backLeft.set(wheelSpeeds.rearLeftMetersPerSecond);
+    backRight.set(wheelSpeeds.rearRightMetersPerSecond);
+  }
+
   @Override
   public void periodic() {
-    
+    odometry.update(getRotation(), getWheelPositions());
+  }
+
+  public MecanumDriveWheelPositions getWheelPositions() {
+    return new MecanumDriveWheelPositions(frontLeft.getEncoder().getPosition() * positionConversionFactor, 
+    frontRight.getEncoder().getPosition() * positionConversionFactor, 
+    backLeft.getEncoder().getPosition() * positionConversionFactor, 
+    backRight.getEncoder().getPosition() * positionConversionFactor);
   }
 
 }

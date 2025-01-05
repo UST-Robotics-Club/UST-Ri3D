@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.OperatorDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -13,6 +14,8 @@ import frc.robot.subsystems.Spitter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -49,7 +52,33 @@ public class RobotContainer {
    */
   private void configureBindings() {
       drivetrain.setDefaultCommand(new OperatorDrive(driverController));
-      
+      // Reset gyro and position
+      new JoystickButton(driverController, XboxController.Button.kStart.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          drivetrain.resetGyro(0);
+          drivetrain.resetPosition(0, 0);
+        }
+      });
+      // Intake control
+      new Trigger(() -> driverController.getRightTriggerAxis() > 0.75).whileTrue(new Command () {
+        @Override
+        public void initialize() {
+          intake.setIntakeOn();
+        };
+
+        @Override
+        public void end(boolean interrupted) {
+          intake.setIntakeOff();
+        };
+      });
+      // Something
+      new JoystickButton(driverController, XboxController.Button.kStart.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          //elevator.blah
+        }
+      });
     
   }
 

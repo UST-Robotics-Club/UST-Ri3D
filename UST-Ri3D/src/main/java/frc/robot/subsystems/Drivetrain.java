@@ -18,6 +18,8 @@ import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.commands.OperatorDrive;
@@ -30,18 +32,13 @@ public class Drivetrain extends SubsystemBase {
   SparkMax frontRight = new SparkMax(DriveConstants.frontRightID, MotorType.kBrushless);
   SparkMax backLeft = new SparkMax(DriveConstants.backLeftID, MotorType.kBrushless);
   SparkMax backRight = new SparkMax(DriveConstants.backRightID, MotorType.kBrushless);
-
-  // Locations of the wheels relative to the robot center.
-  Translation2d frontLeftLocation = new Translation2d(0.381, 0.381);
-  Translation2d frontRightLocation = new Translation2d(0.381, -0.381);
-  Translation2d backLeftLocation = new Translation2d(-0.381, 0.381);
-  Translation2d backRightLocation = new Translation2d(-0.381, -0.381);
+  
   // Creating my kinematics object using the wheel locations.
   private MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
-      frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
-
+      DriveConstants.frontLeftLocation, DriveConstants.frontRightLocation, 
+      DriveConstants.backLeftLocation,  DriveConstants.backRightLocation);
+  private Field2d fieldDisplay = new Field2d();
   // Rotations to meters traveled
-  private final double positionConversionFactor = (1 / 10.71) * Math.PI * 0.15;
   private MecanumDriveOdometry odometry = new MecanumDriveOdometry(
       kinematics,
       getRotation(),
@@ -50,6 +47,15 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain() {
     resetGyro(0);
+    SmartDashboard.putData(fieldDisplay);
+  }
+
+  @Override
+  public void periodic() {
+    odometry.update(getRotation(), getWheelPositions());
+    fieldDisplay.setRobotPose(getPose());
+    SmartDashboard.putNumber("FrontRightSpeed", 
+    frontRight.getEncoder().getVelocity() * DriveConstants.rotationConversionFactor);
   }
 
   public void resetPosition(double x, double y) {
@@ -98,16 +104,11 @@ public class Drivetrain extends SubsystemBase {
     backRight.getClosedLoopController().setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
   }
 
-  @Override
-  public void periodic() {
-    odometry.update(getRotation(), getWheelPositions());
-  }
-
   public MecanumDriveWheelPositions getWheelPositions() {
-    return new MecanumDriveWheelPositions(frontLeft.getEncoder().getPosition() * positionConversionFactor,
-        frontRight.getEncoder().getPosition() * positionConversionFactor,
-        backLeft.getEncoder().getPosition() * positionConversionFactor,
-        backRight.getEncoder().getPosition() * positionConversionFactor);
+    return new MecanumDriveWheelPositions(frontLeft.getEncoder().getPosition() * DriveConstants.rotationConversionFactor,
+        frontRight.getEncoder().getPosition() * DriveConstants.rotationConversionFactor,
+        backLeft.getEncoder().getPosition() * DriveConstants.rotationConversionFactor,
+        backRight.getEncoder().getPosition() * DriveConstants.rotationConversionFactor);
   }
 
 }

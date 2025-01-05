@@ -7,16 +7,26 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
 public class Elevator extends SubsystemBase {
 
   SparkMax motor = new SparkMax(ElevatorConstants.elevatorID, MotorType.kBrushless);
+  RelativeEncoder encoder = motor.getEncoder();
+
+  ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0); // TODO: Find feedforward constants using SysID
+  TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0, 0); // TODO: Find trapezoid profile constraints
+  ProfiledPIDController controller = new ProfiledPIDController(ElevatorConstants.p, ElevatorConstants.i, ElevatorConstants.d, constraints);
+  
 
   int currentLevel = 0;
 
@@ -33,6 +43,20 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
+  }
+
+  double getPosition() {
+    return encoder.getPosition() * ElevatorConstants.positionConversionFactor;
+  }
+
+  /*
+   * 
+   */
+  public void moveToSetpoint(double setpoint) {
+    motor.setVoltage(
+      controller.calculate(getPosition())
+        + feedforward.calculate(controller.getSetpoint().velocity));
   }
 
   /**

@@ -30,13 +30,23 @@ public final class Constants {
     public static final double
     gearRatio = 0.0,      // TODO: Add real value
     wheelDiameter = 0.0,  // TODO: Add real value
-    // Rotations to meters traveled
+    // Meters to rotations
     positionConversionFactor = gearRatio * Math.PI * wheelDiameter,
+
     p = 0.0,              // TODO: Add real value
     i = 0.0,              // TODO: Add real value
     d = 0.0,              // TODO: Add real value
     minOutput = 0.0,      // TODO: Add real value
-    maxOutput = 0.0;      // TODO: Add real value
+    maxOutput = 0.0,      // TODO: Add real value
+
+    // Coral level heights in meters from elevator base
+    elevatorBaseHeight = 0.0; // TODO: Add real value
+    public static final double[] levels = {
+      0.46 - elevatorBaseHeight,
+      0.81 - elevatorBaseHeight,
+      1.21 - elevatorBaseHeight,
+      1.83 - elevatorBaseHeight
+    };
   }
 
   public static class DriveConstants {

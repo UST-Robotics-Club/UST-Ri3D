@@ -9,6 +9,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
@@ -16,6 +17,8 @@ import frc.robot.Constants.ElevatorConstants;
 public class Elevator extends SubsystemBase {
 
   SparkMax motor = new SparkMax(ElevatorConstants.elevatorID, MotorType.kBrushless);
+
+  int currentLevel = 0;
 
   public Elevator() {
     SparkMaxConfig config = new SparkMaxConfig();
@@ -32,7 +35,18 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
   }
 
-  
+  /**
+   * Sets the target level of the elevator by index (0 for base, 3 for top)
+   */
+  private void setLevel(int index) {
+    moveMeters(ElevatorConstants.levels[index] - ElevatorConstants.levels[currentLevel]);
+    currentLevel = index;
+  }
+
+  private void moveMeters(double meters) {
+    double deltaRotations = meters / ElevatorConstants.positionConversionFactor;
+    motor.getClosedLoopController().setReference(motor.getEncoder().getPosition() + deltaRotations, ControlType.kPosition);
+  }
 
 }
 

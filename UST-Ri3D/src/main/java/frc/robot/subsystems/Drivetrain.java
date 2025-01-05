@@ -21,14 +21,15 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.commands.OperatorDrive;
+import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
 
   ADIS16470_IMU imu = new ADIS16470_IMU();
-  SparkMax frontLeft = new SparkMax(1, MotorType.kBrushless);
-  SparkMax frontRight = new SparkMax(2, MotorType.kBrushless);
-  SparkMax backLeft = new SparkMax(3, MotorType.kBrushless);
-  SparkMax backRight = new SparkMax(4, MotorType.kBrushless);
+  SparkMax frontLeft = new SparkMax(DriveConstants.frontLeftID, MotorType.kBrushless);
+  SparkMax frontRight = new SparkMax(DriveConstants.frontRightID, MotorType.kBrushless);
+  SparkMax backLeft = new SparkMax(DriveConstants.backLeftID, MotorType.kBrushless);
+  SparkMax backRight = new SparkMax(DriveConstants.backRightID, MotorType.kBrushless);
 
   // Locations of the wheels relative to the robot center.
   Translation2d frontLeftLocation = new Translation2d(0.381, 0.381);

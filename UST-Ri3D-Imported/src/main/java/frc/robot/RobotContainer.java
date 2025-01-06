@@ -27,9 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public static final Drivetrain drivetrain = new Drivetrain();
-  public static final Elevator elevator = new Elevator();
-  public static final Intake intake = new Intake();
-  public static final Outtake outtake = new Outtake();
+  //public static final Elevator elevator = new Elevator();
+  //public static final Intake intake = new Intake();
+  //public static final Outtake outtake = new Outtake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driverController =
@@ -60,7 +60,7 @@ public class RobotContainer {
           drivetrain.resetPosition(0, 0);
         }
       });
-      // Intake control
+      /*// Intake control
       new Trigger(() -> driverController.getRightTriggerAxis() > 0.75).whileTrue(new Command () {
         @Override
         public void initialize() {
@@ -80,7 +80,7 @@ public class RobotContainer {
           outtake.setAngle(0);
         }
       });
-      /* No level 1 for now */
+      //No level 1 for now
       new JoystickButton(driverController, XboxController.Button.kX.value).onTrue(new InstantCommand() {
         @Override
         public void initialize() {
@@ -112,7 +112,7 @@ public class RobotContainer {
         }
       ));
       new JoystickButton(driverController, XboxController.Button.kRightBumper.value).whileTrue(outtake.dropCoral());
-    
+    */
   }
 
   /**

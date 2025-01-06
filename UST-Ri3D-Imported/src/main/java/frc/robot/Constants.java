@@ -59,13 +59,16 @@ public final class Constants {
   }
 
   public static class DriveConstants {
-    public static final int frontLeftID = 1,
-        frontRightID = 2,
+    public static final int frontLeftID = 2,
+        frontRightID = 1,
         backLeftID = 3,
         backRightID = 4;
     public static final double gearRatio = 10.71,
-        wheelDiameter = Units.inchesToMeters(6),
-        rotationConversionFactor = (1 / gearRatio) * wheelDiameter * Math.PI;
+        wheelDiameter = Units.inchesToMeters(6.35),
+        rotationConversionFactor = (1 / gearRatio) * wheelDiameter * Math.PI,
+        // RPM to meters per second
+        velocityConversionFactor = rotationConversionFactor / 60,
+        maxWheelVelocity = 3.33;
     // Locations of the wheels relative to the robot center. Not correct right now
     public static Translation2d frontLeftLocation = new Translation2d(0.381, 0.381),
         frontRightLocation = new Translation2d(0.381, -0.381),

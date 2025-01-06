@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -44,14 +45,31 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     resetGyro(0);
     SmartDashboard.putData(fieldDisplay);
+    frontLeft.setIdleMode(IdleMode.kBrake);    
+    frontRight.setIdleMode(IdleMode.kBrake);
+    backLeft.setIdleMode(IdleMode.kBrake);
+    backRight.setIdleMode(IdleMode.kBrake);
+
+    frontRight.setInverted(true);
+    backRight.setInverted(true);
+    frontLeft.setInverted(false);
+    backLeft.setInverted(false);
+
+    frontLeft.setOpenLoopRampRate(0.25);    
+    frontRight.setOpenLoopRampRate(0.25);
+    backLeft.setOpenLoopRampRate(0.25);
+    backRight.setOpenLoopRampRate(0.25);
+
   }
 
   @Override
   public void periodic() {
     odometry.update(getRotation(), getWheelPositions());
     fieldDisplay.setRobotPose(getPose());
-    SmartDashboard.putNumber("FrontRightSpeed", 
-    frontRight.getEncoder().getVelocity() * DriveConstants.rotationConversionFactor);
+    SmartDashboard.putNumber("FrontRightSpeed", frontRight.getEncoder().getVelocity() * DriveConstants.velocityConversionFactor);
+    SmartDashboard.putNumber("FrontLeftSpeed", frontLeft.getEncoder().getVelocity() * DriveConstants.velocityConversionFactor);
+    SmartDashboard.putNumber("FrontLeftCurr", frontLeft.getOutputCurrent());
+
     SmartDashboard.putNumber("X pos", getPose().getX());
     SmartDashboard.putNumber("Y pos", getPose().getY());
 
@@ -89,6 +107,8 @@ public class Drivetrain extends SubsystemBase {
   // Uses percents instead of meters per second
   public void drivePercent(ChassisSpeeds speeds) {
     MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
+     // 200 units
+    wheelSpeeds.desaturate(DriveConstants.maxWheelVelocity);
     frontLeft.set(wheelSpeeds.frontLeftMetersPerSecond);
     frontRight.set(wheelSpeeds.frontRightMetersPerSecond);
     backLeft.set(wheelSpeeds.rearLeftMetersPerSecond);

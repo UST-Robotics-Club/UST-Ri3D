@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.RobotContainer;
+import frc.robot.Util;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,11 +25,16 @@ public class OperatorDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double forward = controller.getLeftY();
-    double left = controller.getLeftX();
-    double rot = controller.getRightX();
+    double forward = -controller.getLeftY();
+    double left = -controller.getLeftX();
+    double rot = -controller.getRightX();
+    forward = Util.applyDeadzone(forward, 0.1);    
+    left = Util.applyDeadzone(left, 0.1);
+    rot = Util.applyDeadzone(rot, 0.1);
+    rot = Util.signedSquare(rot);
+
     ChassisSpeeds speeds = new ChassisSpeeds(forward, left, rot);
-    RobotContainer.drivetrain.drivePercent(speeds);
+    RobotContainer.drivetrain.drivePercent(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotContainer.drivetrain.getRotation()));
   }
 
   // Returns true when the command should end.

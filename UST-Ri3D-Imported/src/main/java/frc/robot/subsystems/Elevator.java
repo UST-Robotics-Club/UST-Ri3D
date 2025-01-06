@@ -4,12 +4,10 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -21,7 +19,7 @@ import frc.robot.Constants.ElevatorConstants;
 
 public class Elevator extends SubsystemBase {
 
-  SparkMax motor = new SparkMax(ElevatorConstants.motorID, MotorType.kBrushless);
+  CANSparkMax motor = new CANSparkMax(ElevatorConstants.motorID, MotorType.kBrushless);
   RelativeEncoder encoder = motor.getEncoder();
   DigitalInput limitSwitch = new DigitalInput(ElevatorConstants.limitSwitchID);
 
@@ -32,14 +30,7 @@ public class Elevator extends SubsystemBase {
   int currentLevel = 0;
 
   public Elevator() {
-    SparkMaxConfig config = new SparkMaxConfig();
-    config.idleMode(IdleMode.kBrake);
-    config.closedLoop
-      .p(ElevatorConstants.p)
-      .i(ElevatorConstants.i)
-      .d(ElevatorConstants.d)
-      .outputRange(ElevatorConstants.minOutput, ElevatorConstants.maxOutput);
-    motor.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+    motor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override

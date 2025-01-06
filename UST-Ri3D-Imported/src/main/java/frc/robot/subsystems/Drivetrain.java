@@ -4,13 +4,12 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
@@ -25,10 +24,10 @@ import frc.robot.Constants.DriveConstants;
 public class Drivetrain extends SubsystemBase {
 
   ADIS16470_IMU imu = new ADIS16470_IMU();
-  SparkMax frontLeft = new SparkMax(DriveConstants.frontLeftID, MotorType.kBrushless);
-  SparkMax frontRight = new SparkMax(DriveConstants.frontRightID, MotorType.kBrushless);
-  SparkMax backLeft = new SparkMax(DriveConstants.backLeftID, MotorType.kBrushless);
-  SparkMax backRight = new SparkMax(DriveConstants.backRightID, MotorType.kBrushless);
+  CANSparkMax frontLeft = new CANSparkMax(DriveConstants.frontLeftID, MotorType.kBrushless);
+  CANSparkMax frontRight = new CANSparkMax(DriveConstants.frontRightID, MotorType.kBrushless);
+  CANSparkMax backLeft = new CANSparkMax(DriveConstants.backLeftID, MotorType.kBrushless);
+  CANSparkMax backRight = new CANSparkMax(DriveConstants.backRightID, MotorType.kBrushless);
   
   // Creating my kinematics object using the wheel locations.
   private MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
@@ -59,7 +58,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetPosition(double x, double y) {
-    odometry.resetTranslation(new Translation2d(x, y));
+    odometry.resetPosition(getRotation(), getWheelPositions(), new Pose2d(x, y, getRotation()));
   }
 
   public void resetGyro(double angle) {
@@ -98,10 +97,10 @@ public class Drivetrain extends SubsystemBase {
 
   public void drive(ChassisSpeeds speeds) {
     MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
-    frontLeft.getClosedLoopController().setReference(wheelSpeeds.frontLeftMetersPerSecond, ControlType.kVelocity);
-    frontRight.getClosedLoopController().setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
-    backLeft.getClosedLoopController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
-    backRight.getClosedLoopController().setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
+    frontLeft.getPIDController().setReference(wheelSpeeds.frontLeftMetersPerSecond, ControlType.kVelocity);
+    frontRight.getPIDController().setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
+    backLeft.getPIDController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
+    backRight.getPIDController().setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
   }
 
   public MecanumDriveWheelPositions getWheelPositions() {

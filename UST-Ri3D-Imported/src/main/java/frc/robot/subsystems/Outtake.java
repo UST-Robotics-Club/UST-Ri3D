@@ -4,10 +4,9 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -20,15 +19,13 @@ import frc.robot.Constants.OuttakeConstants;
 
 public class Outtake extends SubsystemBase {
   public Outtake() {
-    SparkMaxConfig config = new SparkMaxConfig();
-    config.idleMode(IdleMode.kBrake);
-    arm.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
-    claw.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+    arm.setIdleMode(IdleMode.kBrake);
+    claw.setIdleMode(IdleMode.kBrake);
     armEncoder.setDutyCycleRange(0, 360);
   }
 
-  SparkMax arm = new SparkMax(OuttakeConstants.armMotorId, null);
-  SparkMax claw = new SparkMax(OuttakeConstants.clawMotorId, null);
+  CANSparkMax arm = new CANSparkMax(OuttakeConstants.armMotorId, MotorType.kBrushless);
+  CANSparkMax claw = new CANSparkMax(OuttakeConstants.clawMotorId, MotorType.kBrushless);
 
   DutyCycleEncoder armEncoder = new DutyCycleEncoder(OuttakeConstants.absEncoderId);
 

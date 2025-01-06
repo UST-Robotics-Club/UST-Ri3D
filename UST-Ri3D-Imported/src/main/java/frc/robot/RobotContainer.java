@@ -5,11 +5,13 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.GrabCoral;
 import frc.robot.commands.OperatorDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -102,17 +104,11 @@ public class RobotContainer {
           outtake.setIndexedAngle(2);
         }
       });
-      new JoystickButton(driverController, XboxController.Button.kLeftBumper.value).onTrue(new ParallelCommandGroup(
-        outtake.grabCoral(),
-        new InstantCommand() {
-          @Override
-          public void initialize() {
-            elevator.setLevel(0);
-          }
-        }
-      ));
-      new JoystickButton(driverController, XboxController.Button.kRightBumper.value).whileTrue(outtake.dropCoral());
-    */
+      // Grab coral manually or when coral notifier triggers
+      new JoystickButton(driverController, XboxController.Button.kLeftBumper.value).onTrue(new GrabCoral());
+      new Trigger(() -> new DigitalInput(OperatorConstants.coralNotifierID).get()).onTrue(new GrabCoral());
+      // Drop coral
+      new JoystickButton(driverController, XboxController.Button.kRightBumper.value).whileTrue(outtake.dropCoral());*/
   }
 
   /**

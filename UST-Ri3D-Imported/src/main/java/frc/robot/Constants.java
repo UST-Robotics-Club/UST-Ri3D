@@ -22,7 +22,8 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static class OperatorConstants {
     public static final int
-    kDriverControllerPort = 0;
+    kDriverControllerPort = 0,
+    coralNotifierID = 0; // TODO: Add real value
   }
 
   public static class ElevatorConstants {

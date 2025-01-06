@@ -39,9 +39,13 @@ public class Elevator extends SubsystemBase {
       moveToSetpoint(ElevatorConstants.levels[currentLevel]);
     }
     
-    if (limitSwitch.get()) {
+    if (isFullyRetracted()) {
       encoder.setPosition(0);
     }
+  }
+
+  public boolean isFullyRetracted() {
+    return limitSwitch.get();
   }
 
   double getPosition() {

@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkBase.IdleMode;
 
@@ -12,53 +13,44 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OuttakeConstants;
 
 public class Outtake extends SubsystemBase {
-  public Outtake() {
-    arm.setIdleMode(IdleMode.kBrake);
-    claw.setIdleMode(IdleMode.kBrake);
-    armEncoder.setDutyCycleRange(0, 360);
-  }
+  
 
   CANSparkMax arm = new CANSparkMax(OuttakeConstants.armMotorId, MotorType.kBrushless);
   CANSparkMax claw = new CANSparkMax(OuttakeConstants.clawMotorId, MotorType.kBrushless);
-
-  DutyCycleEncoder armEncoder = new DutyCycleEncoder(OuttakeConstants.absEncoderId);
-
+  RelativeEncoder armEncoder = arm.getEncoder();
+  
   ArmFeedforward feedforwardArm = new ArmFeedforward(OuttakeConstants.kS, OuttakeConstants.kG, OuttakeConstants.kV);
   TrapezoidProfile.Constraints constraintsArm = new TrapezoidProfile.Constraints(OuttakeConstants.maxVel, OuttakeConstants.maxAccel);
   ProfiledPIDController controllerArm = new ProfiledPIDController(OuttakeConstants.pArm, OuttakeConstants.iArm, OuttakeConstants.dArm, constraintsArm);
-
   int currentAngle = 0;
-
+  public Outtake() {
+    arm.setIdleMode(IdleMode.kBrake);
+    claw.setIdleMode(IdleMode.kBrake);
+  }
   @Override
   public void periodic() {
+    //arm.getEncoder()
     if (DriverStation.isEnabled()) {
       angleArmToSetpoint(OuttakeConstants.angles[currentAngle]);
     }
   }
 
-  double getArmPosition() {
-    return armEncoder.get();
+  double getArmDegrees() {
+    return armEncoder.getPosition() * OuttakeConstants.angleConversionFactor;
   }
 
-  public Command grabCoral() {
-    return runOnce(
-      () -> {
-        setAngle(0);
-        claw.set(0.5);
-        new Thread(() -> {
-          try {
-            Thread.sleep(1000);
-            claw.set(0);
-          } catch (Exception e) {}
-        }).start();});
+  double getArmRadians() {
+    return Math.toRadians(getArmDegrees());
   }
 
+  public void setClaw(double speed) {
+    claw.set(speed);
+  }
   public Command dropCoral() {
     return runEnd(
       () -> {
@@ -71,15 +63,15 @@ public class Outtake extends SubsystemBase {
   }
 
   /*
-   * 
+   * Setpoint in degrees. 0 = down
    */
   public void angleArmToSetpoint(double setpoint) {
     arm.setVoltage(
-      controllerArm.calculate(getArmPosition())
-        + feedforwardArm.calculate(getArmPosition(), controllerArm.getSetpoint().velocity));
+      controllerArm.calculate(getArmDegrees(), setpoint)
+        + feedforwardArm.calculate(getArmRadians(), controllerArm.getSetpoint().velocity));
   }
 
-  public void setAngle(int index) {
+  public void setIndexedAngle(int index) {
     currentAngle = index;
   }
 }

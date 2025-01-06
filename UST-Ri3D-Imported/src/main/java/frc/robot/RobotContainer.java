@@ -27,9 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public static final Drivetrain drivetrain = new Drivetrain();
-  //public static final Elevator elevator = new Elevator();
-  //public static final Intake intake = new Intake();
-  //public static final Outtake outtake = new Outtake();
+  public static final Elevator elevator = null;//new Elevator();
+  public static final Intake intake = null;//new Intake();
+  public static final Outtake outtake = null;//new Outtake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driverController =
@@ -77,7 +77,7 @@ public class RobotContainer {
         @Override
         public void initialize() {
           elevator.setLevel(0);
-          outtake.setAngle(0);
+          outtake.setIndexedAngle(0);
         }
       });
       //No level 1 for now
@@ -85,21 +85,21 @@ public class RobotContainer {
         @Override
         public void initialize() {
           elevator.setLevel(2);
-          outtake.setAngle(1);
+          outtake.setIndexedAngle(1);
         }
       });
       new JoystickButton(driverController, XboxController.Button.kY.value).onTrue(new InstantCommand() {
         @Override
         public void initialize() {
           elevator.setLevel(3);
-          outtake.setAngle(1);
+          outtake.setIndexedAngle(1);
         }
       });
       new JoystickButton(driverController, XboxController.Button.kB.value).onTrue(new InstantCommand() {
         @Override
         public void initialize() {
           elevator.setLevel(4);
-          outtake.setAngle(2);
+          outtake.setIndexedAngle(2);
         }
       });
       new JoystickButton(driverController, XboxController.Button.kLeftBumper.value).onTrue(new ParallelCommandGroup(

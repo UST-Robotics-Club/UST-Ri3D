@@ -100,10 +100,10 @@ public final class Constants {
       maxVel = 0.0, // TODO: Add real value
       maxAccel = 0.0, // TODO: Add real value
       armEncoderOffset = 0.0, // TODO: Add real value
-      gearRatio = 0.0,      // TODO: Add real value
+      armGearRatio = 0.0,      // TODO: Add real value
       wheelDiameter = 0.0,  // TODO: Add real value
-      // Rotations to meters
-      positionConversionFactor = gearRatio * Math.PI * wheelDiameter;
+      // Motor Rotations to Arm Degrees
+      angleConversionFactor = (1/armGearRatio) * 360;
 
     public static final double[] angles = {
       armEncoderOffset,

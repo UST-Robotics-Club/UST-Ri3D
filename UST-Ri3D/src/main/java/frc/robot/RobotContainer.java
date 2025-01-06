@@ -5,12 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.OperatorDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Spitter;
+import frc.robot.subsystems.Outtake;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,7 +28,7 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = new Drivetrain();
   public static final Elevator elevator = new Elevator();
   public static final Intake intake = new Intake();
-  public static final Spitter spitter = new Spitter();
+  public static final Outtake outtake = new Outtake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driverController =
@@ -72,11 +71,30 @@ public class RobotContainer {
           intake.setIntakeOff();
         };
       });
-      // Something
-      new JoystickButton(driverController, XboxController.Button.kStart.value).onTrue(new InstantCommand() {
+      // Elevator level control (starting with bottom letter button for lowest level and going clockwise)
+      new JoystickButton(driverController, XboxController.Button.kA.value).onTrue(new InstantCommand() {
         @Override
         public void initialize() {
-          //elevator.blah
+          elevator.setLevel(0);
+        }
+      });
+      /* No level 1 for now */
+      new JoystickButton(driverController, XboxController.Button.kX.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          elevator.setLevel(2);
+        }
+      });
+      new JoystickButton(driverController, XboxController.Button.kY.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          elevator.setLevel(3);
+        }
+      });
+      new JoystickButton(driverController, XboxController.Button.kB.value).onTrue(new InstantCommand() {
+        @Override
+        public void initialize() {
+          elevator.setLevel(4);
         }
       });
     

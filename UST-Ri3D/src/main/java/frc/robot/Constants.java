@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -26,17 +27,29 @@ public final class Constants {
 
   public static class ElevatorConstants {
     public static final int
-    elevatorID = 7;
+    motorID = 10,
+    limitSwitchID = 0; // TODO: Add real value
     public static final double
     gearRatio = 0.0,      // TODO: Add real value
     wheelDiameter = 0.0,  // TODO: Add real value
-    // Rotations to meters traveled
+    // Rotations to meters
     positionConversionFactor = gearRatio * Math.PI * wheelDiameter,
+
     p = 0.0,              // TODO: Add real value
     i = 0.0,              // TODO: Add real value
     d = 0.0,              // TODO: Add real value
     minOutput = 0.0,      // TODO: Add real value
-    maxOutput = 0.0;      // TODO: Add real value
+    maxOutput = 0.0,      // TODO: Add real value
+
+    // Coral level heights in meters from elevator base
+    elevatorBaseHeight = 0.0; // TODO: Add real value
+    public static final double[] levels = {
+elevatorBaseHeight,
+      0.46 - elevatorBaseHeight, // Adjust as needed
+      0.81 - elevatorBaseHeight,
+      1.21 - elevatorBaseHeight,
+      1.83 - elevatorBaseHeight
+    };
   }
 
   public static class DriveConstants {
@@ -45,7 +58,7 @@ public final class Constants {
         backLeftID = 3,
         backRightID = 4;
     public static final double gearRatio = 10.71,
-        wheelDiameter = 0.15,
+        wheelDiameter = Units.inchesToMeters(6),
         rotationConversionFactor = (1 / gearRatio) * wheelDiameter * Math.PI;
     // Locations of the wheels relative to the robot center. Not correct right now
     public static Translation2d frontLeftLocation = new Translation2d(0.381, 0.381),
@@ -55,13 +68,34 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int deployerId = 5,
-        intakeMotorId = 6,
-        internalReleaserId = 7,
-        releaseTime = 1000;
-    public static final double deployedPosition = 100,
-        retractedPosition = 0,
-        intakeSpeed = 0.9,
-        releaserSpeed = 0.5;
+    public static final int 
+      intakeMotorId = 5;
+    public static final double 
+      intakeSpeed = 0.9;
+  }
+
+  public static class OuttakeConstants {
+    public static final int
+      armMotorId = 6,
+      extensionMotorId = 9,
+      clawMotorId = 8;
+    
+    public static final double
+      p = 0.0,
+      i = 0.0,
+      d = 0.0,
+      armEncoderOffset = 0.0,
+      gearRatio = 0.0,      // TODO: Add real value
+      wheelDiameter = 0.0,  // TODO: Add real value
+      // Rotations to meters
+      positionConversionFactor = gearRatio * Math.PI * wheelDiameter;
+
+    public static final double[] angles = {
+      armEncoderOffset,
+      125 + armEncoderOffset,
+      125 + armEncoderOffset,
+      125 + armEncoderOffset,
+      90 + armEncoderOffset
+    };
   }
 }

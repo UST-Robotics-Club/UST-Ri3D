@@ -25,8 +25,8 @@ public class Elevator extends SubsystemBase {
   RelativeEncoder encoder = motor.getEncoder();
   DigitalInput limitSwitch = new DigitalInput(ElevatorConstants.limitSwitchID);
 
-  ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0); // TODO: Find feedforward constants using SysID
-  TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0, 0); // TODO: Find trapezoid profile constraints
+  ElevatorFeedforward feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
+  TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(ElevatorConstants.maxVel, ElevatorConstants.maxAccel);
   ProfiledPIDController controller = new ProfiledPIDController(ElevatorConstants.p, ElevatorConstants.i, ElevatorConstants.d, constraints);
 
   int currentLevel = 0;

@@ -41,10 +41,16 @@ public final class Constants {
     minOutput = 0.0,      // TODO: Add real value
     maxOutput = 0.0,      // TODO: Add real value
 
+    kS = 0.0, // TODO: Add real value
+    kG = 0.0, // TODO: Add real value
+    kV = 0.0, // TODO: Add real value
+    maxVel = 0.0, // TODO: Add real value
+    maxAccel = 0.0, // TODO: Add real value
+
     // Coral level heights in meters from elevator base
     elevatorBaseHeight = 0.0; // TODO: Add real value
     public static final double[] levels = {
-elevatorBaseHeight,
+      elevatorBaseHeight,
       0.46 - elevatorBaseHeight, // Adjust as needed
       0.81 - elevatorBaseHeight,
       1.21 - elevatorBaseHeight,
@@ -78,13 +84,19 @@ elevatorBaseHeight,
     public static final int
       armMotorId = 6,
       extensionMotorId = 9,
-      clawMotorId = 8;
+      clawMotorId = 8,
+      absEncoderId = 0; // TODO: Add real value
     
     public static final double
-      p = 0.0,
-      i = 0.0,
-      d = 0.0,
-      armEncoderOffset = 0.0,
+      pArm = 0.0, // TODO: Add real value
+      iArm = 0.0, // TODO: Add real value
+      dArm = 0.0, // TODO: Add real value
+      kS = 0.0, // TODO: Add real value
+      kG = 0.0, // TODO: Add real value
+      kV = 0.0, // TODO: Add real value
+      maxVel = 0.0, // TODO: Add real value
+      maxAccel = 0.0, // TODO: Add real value
+      armEncoderOffset = 0.0, // TODO: Add real value
       gearRatio = 0.0,      // TODO: Add real value
       wheelDiameter = 0.0,  // TODO: Add real value
       // Rotations to meters
@@ -92,8 +104,6 @@ elevatorBaseHeight,
 
     public static final double[] angles = {
       armEncoderOffset,
-      125 + armEncoderOffset,
-      125 + armEncoderOffset,
       125 + armEncoderOffset,
       90 + armEncoderOffset
     };

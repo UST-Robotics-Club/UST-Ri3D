@@ -4,19 +4,18 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OuttakeConstants;
 
@@ -25,31 +24,24 @@ public class Outtake extends SubsystemBase {
     SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(IdleMode.kBrake);
     arm.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
-    extension.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
     claw.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
   }
 
   SparkMax arm = new SparkMax(OuttakeConstants.armMotorId, null);
-  SparkMax extension = new SparkMax(OuttakeConstants.extensionMotorId, null);
   SparkMax claw = new SparkMax(OuttakeConstants.clawMotorId, null);
 
-  AnalogInput armEncoder = new AnalogInput(0);
-  RelativeEncoder extensionEncoder = extension.getEncoder();
+  AnalogInput armEncoder = new AnalogInput(OuttakeConstants.absEncoderId);
 
-  ArmFeedforward feedforwardArm = new ArmFeedforward(0, 0, 0); // TODO: Find feedforward constants using SysID
-  TrapezoidProfile.Constraints constraintsArm = new TrapezoidProfile.Constraints(0, 0); // TODO: Find trapezoid profile constraints
-  ProfiledPIDController controllerArm = new ProfiledPIDController(OuttakeConstants.p, OuttakeConstants.i, OuttakeConstants.d, constraintsArm);
+  ArmFeedforward feedforwardArm = new ArmFeedforward(OuttakeConstants.kS, OuttakeConstants.kG, OuttakeConstants.kV);
+  TrapezoidProfile.Constraints constraintsArm = new TrapezoidProfile.Constraints(OuttakeConstants.maxVel, OuttakeConstants.maxAccel);
+  ProfiledPIDController controllerArm = new ProfiledPIDController(OuttakeConstants.pArm, OuttakeConstants.iArm, OuttakeConstants.dArm, constraintsArm);
 
-  ElevatorFeedforward feedforwardExtension = new ElevatorFeedforward(0, 0, 0); // TODO: Find feedforward constants using SysID
-  TrapezoidProfile.Constraints constraintsExtension = new TrapezoidProfile.Constraints(0, 0); // TODO: Find trapezoid profile constraints
-  ProfiledPIDController controllerExtension = new ProfiledPIDController(OuttakeConstants.p, OuttakeConstants.i, OuttakeConstants.d, constraintsExtension);
-
-  int currentLevel = 0;
+  int currentAngle = 0;
 
   @Override
   public void periodic() {
     if (DriverStation.isEnabled()) {
-      angleArmToSetpoint(OuttakeConstants.angles[currentLevel]);
+      angleArmToSetpoint(OuttakeConstants.angles[currentAngle]);
     }
   }
 
@@ -57,8 +49,28 @@ public class Outtake extends SubsystemBase {
     return armEncoder.getVoltage() / RobotController.getCurrent3V3() * 360;
   }
 
-  double getExtensionPosition() {
-    return extensionEncoder.getPosition();
+  public Command grabCoral() {
+    return runOnce(
+      () -> {
+        setAngle(0);
+        claw.set(0.5);
+        new Thread(() -> {
+          try {
+            Thread.sleep(1000);
+            claw.set(0);
+          } catch (Exception e) {}
+        }).start();});
+  }
+
+  public Command dropCoral() {
+    return runEnd(
+      () -> {
+        claw.set(-0.5);
+      },
+      () -> {
+        claw.set(0);
+      }
+    );
   }
 
   /*
@@ -70,13 +82,7 @@ public class Outtake extends SubsystemBase {
         + feedforwardArm.calculate(getArmPosition(), controllerArm.getSetpoint().velocity));
   }
 
-  public void extendArmToSetpoint(double setpoint) {
-    extension.setVoltage(
-      controllerExtension.calculate(getArmPosition())
-        + feedforwardExtension.calculate(controllerExtension.getSetpoint().velocity));
-  }
-
-  public void setLevel(int index) {
-    currentLevel = index;
+  public void setAngle(int index) {
+    currentAngle = index;
   }
 }

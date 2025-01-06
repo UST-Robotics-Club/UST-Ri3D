@@ -12,9 +12,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OuttakeConstants;
@@ -25,12 +24,13 @@ public class Outtake extends SubsystemBase {
     config.idleMode(IdleMode.kBrake);
     arm.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
     claw.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+    armEncoder.setDutyCycleRange(0, 360);
   }
 
   SparkMax arm = new SparkMax(OuttakeConstants.armMotorId, null);
   SparkMax claw = new SparkMax(OuttakeConstants.clawMotorId, null);
 
-  AnalogInput armEncoder = new AnalogInput(OuttakeConstants.absEncoderId);
+  DutyCycleEncoder armEncoder = new DutyCycleEncoder(OuttakeConstants.absEncoderId);
 
   ArmFeedforward feedforwardArm = new ArmFeedforward(OuttakeConstants.kS, OuttakeConstants.kG, OuttakeConstants.kV);
   TrapezoidProfile.Constraints constraintsArm = new TrapezoidProfile.Constraints(OuttakeConstants.maxVel, OuttakeConstants.maxAccel);
@@ -46,7 +46,7 @@ public class Outtake extends SubsystemBase {
   }
 
   double getArmPosition() {
-    return armEncoder.getVoltage() / RobotController.getCurrent3V3() * 360;
+    return armEncoder.get();
   }
 
   public Command grabCoral() {

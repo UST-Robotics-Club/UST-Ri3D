@@ -56,6 +56,9 @@ public class Drivetrain extends SubsystemBase {
     fieldDisplay.setRobotPose(getPose());
     SmartDashboard.putNumber("FrontRightSpeed", 
     frontRight.getEncoder().getVelocity() * DriveConstants.rotationConversionFactor);
+    SmartDashboard.putNumber("X pos", getPose().getX());
+    SmartDashboard.putNumber("Y pos", getPose().getY());
+
   }
 
   public void resetPosition(double x, double y) {
